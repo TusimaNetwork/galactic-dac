@@ -40,3 +40,11 @@ Instructions on how to run this software can be found [here](./docs/running.md)
 ## License
 
 The cdk-validium-node project is licensed under the [GNU Affero General Public License](LICENSE) free software license.
+
+
+## run
+
+
+```
+sudo docker run -itd --name cdk-near -v /tmp/cdk/account.key:/tmp/cdk/account.key  -v /tmp/cdk/dac-config.toml:/app/config/dac-config.toml -v ~/.near-credentials/testnet/ypenghui7.testnet.json:/root/.near-credentials/testnet/ypenghui7.testnet.json -p 8444:8444 cdk-near:v1.0.1 bash -c "/app/cdk-data-availability run --cfg /app/config/dac-config.toml"
+```
