@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	initBlockTimeout = 15 * time.Second
+	initBlockTimeout = 2 * 15 * time.Second
 	minCodeLen       = 2
 )
 
@@ -43,14 +43,19 @@ func InitStartBlock(db *db.DB, l1 config.L1Config) error {
 }
 
 func findContractDeploymentBlock(ctx context.Context, url string, contract common.Address) (*big.Int, error) {
+	log.Info("000000000000000000000000000")
+
 	eth, err := ethclient.DialContext(ctx, url)
 	if err != nil {
 		return nil, err
 	}
+	log.Info("111111111111111111111111111")
 	latestBlock, err := eth.BlockByNumber(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
+	log.Info("222222222222222222222222222")
+
 	firstBlock := findCode(ctx, eth, contract, 0, latestBlock.Number().Int64())
 	return big.NewInt(firstBlock), nil
 }
