@@ -99,7 +99,7 @@ func (st *SequencerTracker) trackAddrChanges() {
 			<-time.After(st.retry)
 			sub, err = st.client.CDKValidium.WatchSetTrustedSequencer(opts, events)
 			if err != nil {
-				log.Errorf("error subscribing to trusted sequencer event, retrying: %v", err)
+				log.Warnf("error subscribing to trusted sequencer event, retrying: %v", err)
 			}
 		}
 
