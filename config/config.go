@@ -2,10 +2,6 @@ package config
 
 import (
 	"crypto/ecdsa"
-	"os"
-	"path/filepath"
-	"strings"
-
 	"github.com/0xPolygon/cdk-data-availability/config/types"
 	"github.com/0xPolygon/cdk-data-availability/db"
 	"github.com/0xPolygon/cdk-data-availability/log"
@@ -14,6 +10,9 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli/v2"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 const (
@@ -28,6 +27,15 @@ type Config struct {
 	Log        log.Config
 	RPC        rpc.Config
 	L1         L1Config
+	Near       NearConfig
+}
+
+type NearConfig struct {
+	WaitPeriod     types.Duration `mapstructure:"WaitPeriod"`
+	Contract       string         `mapstructure:"Contract"`
+	ContractMethod string         `mapstructure:"ContractMethod"`
+	Account        string         `mapstructure:"Account"`
+	Command        string         `mapstructure:"Command"`
 }
 
 // L1Config is a struct that defines L1 contract and service settings
