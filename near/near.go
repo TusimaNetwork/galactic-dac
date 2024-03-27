@@ -81,16 +81,12 @@ func (s *NearDA) checkData(ctx context.Context, dbTx pgx.Tx) ([]WrapResData, err
 		return nil, err
 	}
 
-	log.Info("111111111111111111111")
-
 	res, err := s.GetNearChainLog(ctx, logId, dbTx)
 	if err != nil {
 		log.Errorf("err: %v", err)
 
 		return nil, err
 	}
-
-	log.Info("222222222222222222222")
 
 	keyLogId := make(map[string]int)
 	keys := make([]string, 0)
@@ -105,7 +101,6 @@ func (s *NearDA) checkData(ctx context.Context, dbTx pgx.Tx) ([]WrapResData, err
 
 		return nil, err
 	}
-	log.Info("333333333333333333333")
 
 	wrapRes := make([]WrapResData, 0)
 	for _, da := range datas {
