@@ -14,6 +14,7 @@ import (
 var (
 	// ErrStateNotSynchronized indicates the state database may be empty
 	ErrStateNotSynchronized = errors.New("state not synchronized")
+	NearChan                = make(chan struct{}, 10)
 )
 
 // DB is the database layer of the data node
@@ -50,7 +51,7 @@ func (db *DB) StoreOffChainData(ctx context.Context, od []types.OffChainData, db
 		}
 	}
 
-	return nil
+	return db.StoreNearChainLog(ctx, od, dbTx)
 }
 
 // GetOffChainData returns the value identified by the key
