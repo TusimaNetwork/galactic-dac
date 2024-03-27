@@ -12,10 +12,9 @@ RUN cd /src/db && packr2
 RUN cd /src && make build
 
 # CONTAINER FOR RUNNING BINARY
-FROM ubuntu:20.04
+vim FROM ubuntu:20.04
 COPY --from=build /src/dist/cdk-data-availability /app/cdk-data-availability
 
-# 添加Node.js源
 RUN apt update && \
     apt install curl -y && \
     curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
