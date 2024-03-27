@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/0xPolygon/cdk-data-availability/near"
 	"os"
 	"os/signal"
 	"time"
@@ -118,6 +119,9 @@ func start(cliCtx *cli.Context) error {
 	}
 	go batchSynchronizer.Start()
 	cancelFuncs = append(cancelFuncs, batchSynchronizer.Stop)
+
+	near := near.New(pg, c.Near, db.NearChan)
+	go near.Start()
 
 	// Register services
 	server := rpc.NewServer(
