@@ -2,7 +2,7 @@
 import { NearBindgen, initialize, near, call, view, LookupMap } from 'near-sdk-js';
 
 @NearBindgen({})
-class HelloNear2 {
+class NearStore {
   counting: bigint = BigInt(0);
   daStore: LookupMap<any>;
   
@@ -15,18 +15,10 @@ class HelloNear2 {
     return this.daStore.get(greeting);
   }
 
-  @call({}) // This method changes the state, for which it cost gas
+  @call({ privateFunction: true })
   set_greett({ greeting, greetingValue }: { greeting: string, greetingValue: string }): void {
     near.log(`Saving greeting ${greeting}`);
     near.log(`${greetingValue}`);
-
-    this.counting ++
-    this.daStore.set(greeting, near.blockHeight())
-  }
-
-  @call({}) // This method changes the state, for which it cost gas
-  set_greett2({ greeting }: { greeting: string }): void {
-    near.log(`Saving greeting ${greeting}`);
 
     this.counting ++
     this.daStore.set(greeting, near.blockHeight())
