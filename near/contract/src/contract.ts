@@ -18,8 +18,24 @@ class NearStore {
   @call({ privateFunction: true })
   set_greett({ greeting, greetingValue }: { greeting: string, greetingValue: string }): void {
     near.log(`Saving greeting ${greeting}`);
-    near.log(`${greetingValue}`);
-
+    // if(greetingValue.length > 16000){
+    //   let count = greetingValue.length / 16000;
+    //   for (let i=0; i<count; i++){
+    //     let start = i*16000;
+    //     let end = (i+1)*16000;
+    //     if (end > greetingValue.length) {
+    //       end = greetingValue.length;
+    //     }
+    //     let tmp = greetingValue.slice(start, end);
+    //     near.log(`${tmp.length}`);
+    //     // this.set_greett2({"greetingValue":tmp})
+    //   }
+    // }else{
+    //   near.log(`${greetingValue}`);
+    // }
+    if(greetingValue.length <= 16000) {
+      near.log(`${greetingValue}`);
+    }
     this.counting ++
     this.daStore.set(greeting, near.blockHeight())
   }
