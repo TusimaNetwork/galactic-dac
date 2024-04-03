@@ -2,3 +2,6 @@ dist
 
 .idea
 test/gethData
+near/contract/build
+near/contract/node_modules
+near/contract/sandbox-ts/node_modules
