@@ -2,6 +2,8 @@ package sequencer
 
 import (
 	"context"
+	"github.com/0xPolygon/cdk-data-availability/config/types"
+	"strings"
 	"sync"
 	"time"
 
@@ -16,13 +18,16 @@ import (
 
 // SequencerTracker watches the contract for relevant changes to the sequencer
 type SequencerTracker struct {
-	client  *etherman.Etherman
-	stop    chan struct{}
-	timeout time.Duration
-	retry   time.Duration
-	addr    common.Address
-	url     string
-	lock    sync.Mutex
+	client               *etherman.Etherman
+	stop                 chan struct{}
+	timeout              time.Duration
+	retry                time.Duration
+	addr                 common.Address
+	url                  string
+	lock                 sync.Mutex
+	wsURL                string
+	cDKValidiumAddress   string
+	dataCommitteeAddress string
 }
 
 // NewSequencerTracker creates a new SequencerTracker
@@ -39,12 +44,15 @@ func NewSequencerTracker(cfg config.L1Config, ethClient *etherman.Etherman) (*Se
 	}
 	log.Infof("current sequencer url: %s", url)
 	w := &SequencerTracker{
-		client:  ethClient,
-		stop:    make(chan struct{}),
-		timeout: cfg.Timeout.Duration,
-		retry:   cfg.RetryPeriod.Duration,
-		addr:    addr,
-		url:     url,
+		client:               ethClient,
+		stop:                 make(chan struct{}),
+		timeout:              cfg.Timeout.Duration,
+		retry:                cfg.RetryPeriod.Duration,
+		addr:                 addr,
+		url:                  url,
+		wsURL:                cfg.WsURL,
+		cDKValidiumAddress:   cfg.CDKValidiumAddress,
+		dataCommitteeAddress: cfg.DataCommitteeAddress,
 	}
 	return w, nil
 }
@@ -75,6 +83,18 @@ func (st *SequencerTracker) setUrl(url string) {
 	st.url = url
 }
 
+func (st *SequencerTracker) setClient() {
+	_client, err := etherman.New(config.L1Config{WsURL: st.wsURL, Timeout: types.Duration{Duration: st.timeout}, CDKValidiumAddress: st.cDKValidiumAddress,
+		DataCommitteeAddress: st.dataCommitteeAddress})
+	if err != nil {
+		log.Warnf("error set client: %v", err)
+		return
+	}
+	st.lock.Lock()
+	defer st.lock.Unlock()
+	st.client = _client
+}
+
 // Start starts the SequencerTracker
 func (st *SequencerTracker) Start() {
 	go st.trackAddrChanges()
@@ -100,6 +120,9 @@ func (st *SequencerTracker) trackAddrChanges() {
 			sub, err = st.client.CDKValidium.WatchSetTrustedSequencer(opts, events)
 			if err != nil {
 				log.Warnf("error subscribing to trusted sequencer event, retrying: %v", err)
+				if strings.Contains(err.Error(), "dial tcp") || strings.Contains(err.Error(), "i/o timeout") {
+					st.setClient()
+				}
 			}
 		}
 
@@ -143,7 +166,10 @@ func (st *SequencerTracker) trackUrlChanges() {
 			<-time.After(st.retry)
 			sub, err = st.client.CDKValidium.WatchSetTrustedSequencerURL(opts, events)
 			if err != nil {
-				log.Errorf("error subscribing to trusted sequencer event, retrying: %v", err)
+				log.Warnf("error subscribing to trusted sequencer event, retrying: %v", err)
+				if strings.Contains(err.Error(), "dial tcp") || strings.Contains(err.Error(), "i/o timeout") {
+					st.setClient()
+				}
 			}
 		}
 
