@@ -120,7 +120,8 @@ func (st *SequencerTracker) trackAddrChanges() {
 			sub, err = st.client.CDKValidium.WatchSetTrustedSequencer(opts, events)
 			if err != nil {
 				log.Warnf("error subscribing to trusted sequencer event, retrying: %v", err)
-				if strings.Contains(err.Error(), "dial tcp") || strings.Contains(err.Error(), "i/o timeout") {
+				errMsg := err.Error()
+				if strings.Contains(errMsg, "dial tcp") || strings.Contains(errMsg, "i/o timeout") {
 					st.setClient()
 				}
 			}
@@ -167,7 +168,8 @@ func (st *SequencerTracker) trackUrlChanges() {
 			sub, err = st.client.CDKValidium.WatchSetTrustedSequencerURL(opts, events)
 			if err != nil {
 				log.Warnf("error subscribing to trusted sequencer event, retrying: %v", err)
-				if strings.Contains(err.Error(), "dial tcp") || strings.Contains(err.Error(), "i/o timeout") {
+				errMsg := err.Error()
+				if strings.Contains(errMsg, "context deadline exceeded") || strings.Contains(errMsg, "dial tcp") || strings.Contains(errMsg, "i/o timeout") {
 					st.setClient()
 				}
 			}
