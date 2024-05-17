@@ -36,6 +36,7 @@ type NearConfig struct {
 	ContractMethod string         `mapstructure:"ContractMethod"`
 	Account        string         `mapstructure:"Account"`
 	Command        string         `mapstructure:"Command"`
+	Detail         bool           `mapstructure:"Detail"`
 }
 
 // L1Config is a struct that defines L1 contract and service settings
