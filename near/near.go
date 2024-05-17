@@ -128,7 +128,12 @@ func (s *NearDA) uploadData(data, key string, logId int) error {
 		return err
 	}
 
-	fmt.Println(res)
+	if s.cfg.Detail {
+		log.Debug("==============================================")
+		log.Debugf(res)
+		log.Debug("----------------------------------------------")
+	}
+
 	idIndex := strings.Index(res, "Transaction Id ")
 	tx := res[idIndex+15 : idIndex+15+44]
 	ctx := context.Background()
